@@ -1,4 +1,4 @@
-<img width="738" height="2760" alt="image" src="https://github.com/user-attachments/assets/524e913a-245c-47ca-8782-231e9d0767cf" />## In this section, we will se multiple scenarios of sycnhronized keywords 
+## In this section, we will se multiple scenarios of sycnhronized keywords 
 
 ### Understanding why synchronized keyword is needed in multiple threaded programs
 
