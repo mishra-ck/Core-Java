@@ -19,3 +19,93 @@ But remaining threads are allowed to execute non-synchronized methods simultaneo
 ### For every object:
 
 <img width="604" height="322" alt="image" src="https://github.com/user-attachments/assets/e452e0ab-08bf-4eb5-8b3f-1a4dd2e08d62" />
+
+For example:
+```java
+class X
+{
+   synchronized area
+   {
+      we are performing operation[add/delete/replace/update]
+      where  object state changes
+   }
+   non-synchronized area
+   {
+      where object state remains same
+      operation[read]
+   }
+}
+```
+### Let's see this with proper example :
+
+```java
+	public class ThreadDemoSynchronized {
+	
+		public static void main(String[] args)
+		{
+			
+			Display d = new Display();
+			
+			// creating 2 threads which will execute on same object 
+			MyThread14 t1 = new MyThread14(d, "Dhoni");
+			MyThread14 t2 = new MyThread14(d, "Yuvraj");
+			
+			t1.start();
+			t2.start();
+		}
+	
+	}
+	
+	class Display
+	{
+		// synchronized method 
+		public synchronized void wish(String name)
+		{
+			for(int i =0 ; i< 5 ; i++)
+			{
+				System.out.print("Good morining : ");
+				try
+				{
+					Thread.sleep(2000);
+				}
+				catch(InterruptedException e) {}
+				System.out.println(name);
+			}
+		}
+	}
+	
+	class MyThread14 extends Thread
+	{
+		Display d ;
+		String name ;
+		MyThread14(Display d, String name)
+		{
+			this.d = d;
+			this.name = name ;
+		}
+		public void run()  // job of thread
+		{
+			d.wish(name);
+		}
+	}
+	
+	
+	/* Output: Regular
+	Good morining : Dhoni
+	Good morining : Dhoni
+	Good morining : Dhoni
+	Good morining : Dhoni
+	Good morining : Dhoni
+	Good morining : Yuvraj
+	Good morining : Yuvraj
+	Good morining : Yuvraj
+	Good morining : Yuvraj
+	Good morining : Yuvraj
+
+```
+### NOTE:
+If we are not declaring wish()  as synchronized then both threads will be executed simultaneously and hence we will get irregular output.
+If we declare wish method as synchronized then at a time only one thread is allowed to execute wish() on the given Display object.
+Hence we will get regular output.
+
+
