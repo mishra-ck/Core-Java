@@ -16,3 +16,6 @@ NOTE: While a thread executing a synchronized method on a given object the remai
 But remaining threads are allowed to execute non-synchronized methods simultaneously.
 
 ```
+### For every object:
+
+<img width="604" height="322" alt="image" src="https://github.com/user-attachments/assets/e452e0ab-08bf-4eb5-8b3f-1a4dd2e08d62" />
