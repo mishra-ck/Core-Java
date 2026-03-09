@@ -1,4 +1,4 @@
-## In this section, we will se multiple scenarios of sycnhronized keywords 
+<img width="738" height="2760" alt="image" src="https://github.com/user-attachments/assets/524e913a-245c-47ca-8782-231e9d0767cf" />## In this section, we will se multiple scenarios of sycnhronized keywords 
 
 ### Understanding why synchronized keyword is needed in multiple threaded programs
 
@@ -155,6 +155,93 @@ Good morining : Yuvraj
 Good morining : Yuvraj
 Good morining : Yuvraj
  
+```
+
+### Let's take another example to understand it more 
+
+Demonstration of two different objects are trying to access different methods of same class simultaneously.
+In this case we will get irregular output when the display methods are just normal method.
+Output will be regular when methods are defined as synchronized. Once a thread will get a chance, it will execute and then other thread will execute.
+
+```java
+public class ThreadDemoSynchronized3 {
+
+	public static void main(String[] args) 
+	{
+		Display2 d  =  new Display2() ;
+		MyThread15 t1 = new MyThread15(d);
+		MyThread16 t2 = new MyThread16(d) ;
+		
+		t1.start();
+		t2.start();
+
+	}
+
+}
+
+// Creating class types
+class MyThread15 extends Thread
+{
+	Display2 d ;
+	MyThread15(Display2 d)
+	{
+		this.d = d ;
+	}
+	
+	public void run()
+	{
+		d.displayn() ;  // job will call displayn()
+	}
+}
+
+class MyThread16 extends Thread
+{
+	Display2 d ;
+	MyThread16(Display2 d)
+	{
+		this.d = d ;
+	}
+	
+	public void run()
+	{
+		d.displayc() ;   // job will call displayc()
+	}
+}
+class Display2
+{
+	public synchronized void displayn()
+	{
+		for(int i = 0  ; i < 5 ; i ++)
+		{
+			System.out.print(i);
+			try
+			{
+				Thread.sleep(1000);
+			}
+			catch(InterruptedException e) {}
+		}
+	}
+	public synchronized void displayc()
+	{
+		for(int i = 65  ; i < 75 ; i ++)
+		{
+			System.out.print((char)i);
+			try
+			{
+				Thread.sleep(1000);
+			}
+			catch(InterruptedException e) {}
+		}
+	}
+}
+
+
+/*
+ 0A1BC2D34EFGHIJ : In case of non-synchronized 
+ 
+ 01234ABCDEFGHIJ : In case of synchronized
+ */
+
 ```
 
 
