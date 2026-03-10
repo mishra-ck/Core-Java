@@ -16,23 +16,15 @@ then waiting will get that notification and continue its execution  with those u
 6. If a thread call notify() on any object , it releases the lock of that object but may not immediately.
 7. Except wait() , notify() and notifyAll() , there is no other method where thread releases the lock.
 
-------------------------------------------
-| Method      | Is thread releases lock? |
-------------------------------------------
-| yield()     | NO                        |
-| join()	  | NO                        |
-| sleep()     | NO                        |
-| wait() 	  | YES                       |
-| notify()    | YES                       |
-| notifyAll() |	YES                       |
--------------------------------------------
+<img width="325" height="208" alt="image" src="https://github.com/user-attachments/assets/061f291b-fe95-431e-bc3e-53b036ed3de1" />
+
 
 **SYNTAX**:
 1. wait() method:
 2. public final void wait() throws InterruptedException
 3. public final native void wait(long ms) throws InterruptedException
 4. public final void wait(long ms , int ns) throws InterruptedException
-5. public final native void notify()
+5. public final native void notify() ̑
 6. public final native void notifyAll()
 	
 **NOTE**:
