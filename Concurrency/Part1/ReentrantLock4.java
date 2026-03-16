@@ -1,4 +1,4 @@
-package concurrency.lock;
+package concurrency.threadlocal.Part1;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;

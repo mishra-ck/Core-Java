@@ -1,4 +1,4 @@
-package concurrency.lock;
+package concurrency.threadlocal.Part1;
 
 import java.util.concurrent.locks.ReentrantLock;
 public class ReentrantLock3 {

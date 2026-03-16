@@ -1,4 +1,4 @@
-package concurrency.thread.group;
+package concurrency.threadlocal.Part1;
 
 public class ThreadGroup3 {
     public static void main(String[] args) {

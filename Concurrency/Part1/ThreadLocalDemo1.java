@@ -1,4 +1,4 @@
-package concurrency.threadlocal;
+package concurrency.threadlocal.Part1;
 
 public class ThreadLocalDemo1 {
     public static void main(String[] args) {

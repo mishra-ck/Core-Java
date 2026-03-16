@@ -1,4 +1,4 @@
-package concurrency.thread.group;
+package concurrency.threadlocal.Part1;
 
 // Important Methods present in ThreadGroup class
 public class ThreadGroup2 {

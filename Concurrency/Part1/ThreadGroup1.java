@@ -1,4 +1,4 @@
-package concurrency.thread.group;
+package concurrency.threadlocal.Part1;
 
 // ThreadGroup introduction
 public class ThreadGroup1 {

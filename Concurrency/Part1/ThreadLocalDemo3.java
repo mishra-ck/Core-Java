@@ -1,4 +1,4 @@
-package concurrency.threadlocal;
+package concurrency.threadlocal.Part1;
 public class ThreadLocalDemo3 {
     public static void main(String[] args) {
         CustomerThread c1 = new CustomerThread("Customer T-1");
