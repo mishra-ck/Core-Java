@@ -1,26 +1,25 @@
-We can prevent a thread execution by using the following methods:
+### We can prevent a thread execution by using the following methods:
 
-1.yield()
-2.join()
-3.sleep()
-
-	1. yield() method:
-	
-	This method  pauses execution of current  thread to give the chance for waiting thread of same priority , if there is no waiting thread or all waiting threads have low priority then same thread can continue it's execution.
-	Ex: long batsman required this method
-	
-	If multiple threads are waiting with same priority then which waiting thread will get the chance to execute we can't tell it depends on thread scheduler.
-	
-	The thread which is yielded, when it will get the chance once again to execute it depends on Thread scheduler. We can't tell exactly when it will get chance again.
-	
-	syntax : public static  native void yield()
-	
-	Life cycle of a thread when  it calls yield() ;
-	  
-	
+1. `yield()`
+2. `join()`
+3. `sleep()`
 
 
-	Example: 
+````
+1. yield() method:
+	
+This method  pauses execution of current  thread to give the chance for waiting thread of same priority , if there is no waiting thread or all waiting threads have low priority then same thread can continue it's execution.
+Ex: long batsman required this method
+
+If multiple threads are waiting with same priority then which waiting thread will get the chance to execute we can't tell it depends on thread scheduler.
+
+The thread which is yielded, when it will get the chance once again to execute it depends on Thread scheduler. We can't tell exactly when it will get chance again.
+
+syntax : public static  native void yield()
+
+Life cycle of a thread when  it calls yield() ;
+
+Example: 
 	
 	public class ThreadDemoYield {
 	
@@ -67,9 +66,9 @@ We can prevent a thread execution by using the following methods:
 	If we are not commenting() then child always calls yield() method because of that main thread will get chance more number of times and the chance of completing main thread first is high.
 
 	Some platforms won't provide proper support for yield method .
-	
-	………………………………………………………………………………………………………………………………………………………
-	
+
+------------------------------------------------------------------------------------------------------------------
+  
 	2. join() method :
 	
 	If a thread wants to wait until completion of some other thread then we should go for join() method.
@@ -93,7 +92,6 @@ We can prevent a thread execution by using the following methods:
 	NOTE: Every join method throws InterruptedException which is checked Exception.
 	Hence compulsory we should this exception either by using try and catch or by throws keyword, otherwise we will get  compile time error.
 	
-
 	
 	Example:
 	
@@ -260,8 +258,9 @@ We can prevent a thread execution by using the following methods:
 		Thread.currentThread().join() ;
 	}
 	}
-	
-	
+
+------------------------------------------------------------------------------------------------------------------
+
 	3.sleep() method: 
 	 
 	If a thread don't want to perform any operation for a particular amount of time, then we should go for sleep() method.
@@ -408,5 +407,5 @@ We can prevent a thread execution by using the following methods:
 	In the above example interrupt call waited until child thread for loop (10000) times.
 
 	
-
+```
 	
