@@ -38,6 +38,31 @@ public class DeadLockDemo{
     
 }
 ```
+### DeadLock Detection - ThreadMXBean
+
+```java 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+
+public class DeadlockDetection {
+
+    public void deadLockedThreads() {
+        
+        ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+        long[] deadLockThreads = bean.findDeadlockedThreads();
+        if (deadLockThreads != null) {
+            ThreadInfo[] threadInfos = bean.getThreadInfo(deadLockThreads);
+            for (ThreadInfo info : threadInfos){
+                System.out.println( "Deadlocked :"+ info.getThreadName() 
+                        + " waiting for : "+ info.getLockName()
+                );
+            }
+        }
+    }
+}
+```
+
 ### Deadlock prevention strategies
 
 ```java
@@ -81,6 +106,5 @@ public class PreventDeadLock {
     
     
 }
-
 
 ```
