@@ -38,3 +38,49 @@ public class DeadLockDemo{
     
 }
 ```
+### Deadlock prevention strategies
+
+```java
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class PreventDeadLock {
+
+    /** ------- FIRST :  Always Maintain lock ordering  --------*/
+    public void lockOrder(Object obj1, Object obj2) {
+        Object first = obj1;
+        Object second = obj2;
+        synchronized (first) {
+            synchronized (second) {
+                System.out.println("Lock ordering..");
+            }
+        }
+    }
+
+    /** tryLock with timeouts using ReentrantLock */
+    Lock lock1 = new ReentrantLock();
+    Lock lock2 = new ReentrantLock();
+
+    public void lockTimeOuts() {
+        boolean isTaskDone = false;
+        while (!isTaskDone) {
+            if (lock1.tryLock(50, TimeUnit.MILLISECONDS)) {
+                try{
+                    if(lock.trylock(50,TimeUnit.MILLISECONDS)){
+                        try {isTaskDone = true ;}
+                        finally{ lock2.unlock();}
+                    }
+                }finally{ lock1.unlock();}
+            }
+        }
+    }
+
+    /**  User Fair lock using ReentrantLock(true) - FIFO */
+    ReentrantLock lock = new ReentrantLock(true); // FIFO Ordering of locks
+    
+    
+}
+
+
+```
