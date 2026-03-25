@@ -36,6 +36,31 @@ public class CallableFutureExample {
         } finally {
             executor.shutdown();
         }
+        
+        // Other Future methods
+        System.out.println(future.isDone());  // finished ?
+        System.out.println(future.isCancelled());  // cancelled ?
+        System.out.println(future.cancel(true));  // interrupt running task
+        
+        // invokeAll() : In case we have multiple Callable Tasks submitted at once.
+        List<Callable<String>> tasks = List.of(
+                () -> fetchFromDB(),
+                () -> callExternalAPI(),
+                () -> processFile()
+        );
+        
+        // Without timeout 
+        List<Future<String>> futures = pool.invokeAll(tasks);  // blocks until all done
+        for (Future<String> f : futures) {
+            System.out.println(f.get()); 
+        }
+        // With timeout:
+        List<Future<String>> timeOutFutures = pool.invokeAll(tasks, 30, TimeUnit.SECONDS);
+        
+        // invokeAny() : submit many, returns first completed one.
+        String first = pool.invokeAny(tasks);  // cancels remaining
+        System.out.println("First result: " + first);
+        
     }
 }
 
