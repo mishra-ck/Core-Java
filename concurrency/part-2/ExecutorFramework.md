@@ -39,7 +39,26 @@ for (Future<String> future1 : futures) {
 }
 
 executor.shutdown();
-executor.awaitTermination(60, TimeUnit.SECONDS); 
+executor.awaitTermination(60, TimeUnit.SECONDS);
 
+```
+### Built-in ExecutorService Factory methods
 
+```java
+// 1.Fixed ThreadPool - good for CPU bound taks
+    ExecutorService fixed = Executors.newFixedThreadPool(
+        Runtime.getRuntime().availableProcessors());
+
+// 2.Cached ThreadPool - good for short-lived tasks (thread count auto-scales)
+    ExecutorService cached = Executors.newCachedThreadPool();
+    
+// 3.Single ThreadPool - guarantees sequential execution
+    ExecutorService single = Executors.newSingleThreadExecutor();
+
+// 4.Scheduled ThreadPool - good for delayed/periodic tasks
+    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+    scheduler.schedule(() -> System.out.println("Task delayed.."),5,TimeUnits.SECONDS);
+    scheduler.scheduleAtFixedRate(() -> heartbeat(),0,30,TimeUnit.SECONDS);
+    scheduler.scheduleAtFixedDelay(() -> cleanup(),0,10,TimeUnits.SECONDS);
+    
 ```
