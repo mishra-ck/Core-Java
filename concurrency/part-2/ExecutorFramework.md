@@ -61,4 +61,13 @@ executor.awaitTermination(60, TimeUnit.SECONDS);
     scheduler.scheduleAtFixedRate(() -> heartbeat(),0,30,TimeUnit.SECONDS);
     scheduler.scheduleAtFixedDelay(() -> cleanup(),0,10,TimeUnits.SECONDS);
     
+
+// Monitoring a ThreadPoolExecutor
+            
+System.out.println("Pool size: "     + executor.getPoolSize());
+System.out.println("Active tasks: "  + executor.getActiveCount());
+System.out.println("Queue size: "    + executor.getQueue().size());
+System.out.println("Completed: "     + executor.getCompletedTaskCount());
+System.out.println("Total tasks: "   + executor.getTaskCount());
+
 ```
