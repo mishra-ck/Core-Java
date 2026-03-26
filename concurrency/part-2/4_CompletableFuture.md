@@ -17,7 +17,7 @@ CompletableFuture<String> cf3 = CompletableFuture.supplyAsync(
         () -> fetchData(),pool);
 
 ```
-### TRANSFORMATION - thenApply, thenAccept, thenRun
+### TRANSFORMATION - `thenApply`, `thenAccept`, `thenRun`
 ```java
 
 CompletableFuture<Integer> length = cf1
@@ -30,5 +30,42 @@ CompletableFuture<Void> finished = cf1
 // Async Variants
 cf1.thenApplyAsync(s -> transform(s));
 cf1.thenApplyAsync(s -> transform(s), pool); // custom executor
+
+```
+### CHAINING - `thenCombine`, `allOf`, `anyOf`
+```java 
+
+CompletableFuture<String> price = CompletableFuture
+                        .supplyAsync(() -> fetchPrice());
+CompletableFuture<String> stock = CompletableFuture
+                        .supplyAsync(() -> fetchStock());
+
+// now combine result of both 
+CompletableFuture<String> bothCombined = price.thenCombine(
+        stock, (p,s) -> "Price: "+ p + " , Stock: "+ s );
+
+// wait for all to complete 
+CompletableFuture<Void> all = CompletableFuture.allOf(
+        fetchUser(), fetchOrders(), fetchSms());
+all.thenRun( () -> System.out.println("All data loaded.."));
+
+// Collect result form allOf()
+List<CompletableFuture<String>> futures = List.of(
+        CompletableFuture.supplyAsync(() -> "A"),
+        CompletableFuture.supplyAsync(() -> "B"),
+        CompletableFuture.supplyAsync(() -> "C"),
+        );
+
+CompletableFuture<List<String>> allResult = CompletableFuture
+        .allOf(futures.toArray(new CompletableFuture[0]))
+        .thenApply( v -> futures.stream()
+        .map(CompletableFuture::join)  
+        .collect(Collectors.toList())); 
+
+// First to complete - anyOf()
+CompetableFuture<Object> fatest = CompletableFuture.anyOf(
+        queryOne(), queryTwo(), queryThree() );
+
+String result = (String)fastest.join();
 
 ```
