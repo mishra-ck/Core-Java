@@ -17,3 +17,18 @@ CompletableFuture<String> cf3 = CompletableFuture.supplyAsync(
         () -> fetchData(),pool);
 
 ```
+### TRANSFORMATION - thenApply, thenAccept, thenRun
+```java
+
+CompletableFuture<Integer> length = cf1
+        .thenApply(String::length);  // transform result
+CompletableFuture<Void> printed = cf1
+        .thenAccept(s -> System.out.println(s));  // consumes result
+CompletableFuture<Void> finished = cf1
+        .thenRun(() -> System.out.println("Task Done.."));  // ignore result
+
+// Async Variants
+cf1.thenApplyAsync(s -> transform(s));
+cf1.thenApplyAsync(s -> transform(s), pool); // custom executor
+
+```
