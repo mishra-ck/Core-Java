@@ -69,3 +69,25 @@ CompetableFuture<Object> fatest = CompletableFuture.anyOf(
 String result = (String)fastest.join();
 
 ```
+### ERROR HANDLING 
+```java 
+
+CompletableFuture<String> safe = CompletableFuture
+    .supplyAsync(() -> fetchData())
+    .exceptionally(ex -> {
+        log.error("Failed: " + ex.getMessage());
+        return "fallback";           // default recovery 
+    });
+
+// Handle both success and failure:
+        CompletableFuture<String> handled = CompletableFuture
+        .supplyAsync(() -> fetchData())
+        .handle((result2, ex) -> {
+        if (ex != null) {
+            log.error("Error: ", ex);
+            return "fallback";
+        }
+        return result2.toUpperCase();
+        });
+
+```
