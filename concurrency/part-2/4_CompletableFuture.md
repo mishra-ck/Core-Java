@@ -79,15 +79,25 @@ CompletableFuture<String> safe = CompletableFuture
         return "fallback";           // default recovery 
     });
 
-// Handle both success and failure:
-        CompletableFuture<String> handled = CompletableFuture
-        .supplyAsync(() -> fetchData())
-        .handle((result2, ex) -> {
+// handle() - both success and failure:
+CompletableFuture<String> handled = CompletableFuture
+    .supplyAsync(() -> fetchData())
+    .handle((result2, ex) -> {
         if (ex != null) {
             log.error("Error: ", ex);
             return "fallback";
         }
-        return result2.toUpperCase();
-        });
+    return result2.toUpperCase();
+});
+
+// whenComplete() 
+CompletableFuture<String> handled = CompletableFuture
+    .supplyAsync(() -> fetchData())
+    .whenComplete((result3, ex) -> {
+        if (ex != null) log.error("Task failed : ", ex);
+        else log.info("Task done.."+ result3);
+    }
+});
+
 
 ```
