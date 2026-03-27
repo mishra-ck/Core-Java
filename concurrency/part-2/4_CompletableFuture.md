@@ -69,6 +69,33 @@ CompetableFuture<Object> fatest = CompletableFuture.anyOf(
 String result = (String)fastest.join();
 
 ```
+### CompletableFuture with TIMEOUT
+```java
+
+CompletableFuture<String> withTimeout = CompletableFuture
+        .supplyAsync(() -> fetchData())
+        .orTimeout(5, TimeUnit.SECONDS)
+        .exceptionally(ex -> "Timeout-fallback");
+
+CompletableFuture<String> withDefault = CompletableFuture
+        .supplyAsync(() -> fetchData())
+        .completeOnTimeout("default",5,TimeUnit.SECONDS);
+
+// Manual Completion
+CompletableFuture<String> manual = new CompletableFuture<>();
+
+otherPool.submit(() -> {
+    try{
+        String result = fetchData();
+        manual.compplete(result);
+        }catch(Exception e){
+            manual.completeExceptionally(e);
+        }
+});
+String value = manual.join();
+
+```
+
 ### ERROR HANDLING 
 ```java 
 
