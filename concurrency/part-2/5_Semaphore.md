@@ -42,4 +42,18 @@ if(connection.tryAcquire()){
 if (connection.tryAcquire(500, TimeUnit.MILLISECONDS)) { /* ... */ }
 
 
+// BINARY Semaphore = mutex(not Reentrant)
+Semaphore mutex = new Semaphore(1);
+mutex.acquire()
+try{ criticalSection(); }
+finally{ mutex.release(); }
+
+// Semaphore for Rate Limiting
+ExecutorService scheduler = Executors.newScheduledThreadPool();
+Semaphore rateLimiter = new Semaphore(100,true);  // fair semaphore
+scheduler.scheduleAtFixedRate(
+        () -> rateLimiter.release(100 - rateLimiter.availablePermits())
+        ,1,1,TimeUnits.SECONDS        
+);
+
 ```
