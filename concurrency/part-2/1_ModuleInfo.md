@@ -9,5 +9,5 @@ and other related topics are discussed in depth.
 4. [Semaphore](#synchronizers)
 5. [CountDownLatch, CyclicBarrier](#synchronizers)
 6. [Phaser, Exchanger](#synchronizers)
-7. [Concurrent Collections](#concurrent-collections)
+7. [Concurrent HashMap](#concurrent-collections)
 8. [BlockingQueue & Producer-Consumer](#blocking-queue)
