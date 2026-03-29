@@ -48,3 +48,38 @@ It allows them to safely swap objects in memory.
 3. Thread-2 arrives at Exchanger with Object-2 and calls `exchanger()`.
 4. The Exchanger takes Object-1 from Thread-1 gives to Thread-2 anv vice-versa.
 5. Both thread wake up and continue with newly swapped data.
+
+NOTE : This is useful in producer-consumer setup.
+
+```java 
+
+Exchanger<List<String>> exchanger = new Exchanger<>();
+
+// producer thread
+Thread producer = new Thread( () ->{
+        List<String> fullBuffer = new ArrayList<>();
+        while(true){
+            fillEmptyBuffer(fullBuffer);
+            try{
+                List<String> emptyBuffer = exchanger.exchange(fullBuffer);
+                fullBuffer = emptyBuffer; // now has empty buffer
+                emptyBuffer.clear();
+        }catch(InterruptedException e){ break;}
+        }
+    }
+);
+
+// consumer thread
+Thread consumer = new Thread(() -> {
+    List<String> emptyBuffer = new ArrayList<>();
+        while (true) {
+            try {
+                List<String> fullBuffer = exchanger.exchange(emptyBuffer);
+                processFullBuffer(fullBuffer);
+                emptyBuffer = fullBuffer;
+                emptyBuffer.clear();
+        } catch (InterruptedException e) { break; }
+    }
+});
+
+```
