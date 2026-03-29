@@ -3,6 +3,7 @@ Concurrent HashMap
 
 ```java 
 import java.util.Comparator;
+import java.util.concurrent.atomic.LongAdder;
 
 public class ConcurrentHashMapDemo {
 
@@ -28,7 +29,14 @@ public class ConcurrentHashMapDemo {
         String maxKey = map.reduceEntries(
                 Map.Entry.comparingByValue(Comparator.reverseOrder())
         ).getKey();
-        
+
+        ConcurrentHashMap<String, LongAdder> frequency = new ConcurrentHashMap<>();
+        String word = "hello";
+        frequency.merge(word, new LongAdder(),(existing,newAdder) -> {
+            existing.increment();
+            return existing;
+        });
+
     }
 }
 
