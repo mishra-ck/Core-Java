@@ -9,3 +9,8 @@ The differentiator between a ThreadPoolExecutor and Fork-Join Pool is its `work-
    This optimizes for cache locality because the most recently created sub-tasks are likely working on memory that is currently hot in the CPU cache.
 3. **FIFO for Thieves**: If a worker thread empties its own deque, it doesn't just block. Instead, it randomly selects another worker thread and "steals" a task from the tail of that thread's deque (FIFO order). 
    This minimizes contention, as the owner is working on one end of the queue while the thief is stealing from the other.
+
+### To implement Fork-Join algorithm, we should extend one of these classes.
+1. `RecursiveAction`: For tasks that perform computation but do not return result(ex: modifying an array in place). 
+2. `RecursiveTask<V>`: For tasks that compute and return result of type V (ex: parallel map-reduce)
+
