@@ -14,3 +14,24 @@ The differentiator between a ThreadPoolExecutor and Fork-Join Pool is its `work-
 1. `RecursiveAction`: For tasks that perform computation but do not return result(ex: modifying an array in place). 
 2. `RecursiveTask<V>`: For tasks that compute and return result of type V (ex: parallel map-reduce)
 
+### Core Architecture:
+
+```
+                        ┌──────────────────────────┐
+                        │      ForkJoinPool        │
+                        │  (Common Pool or Custom) │
+                        └──────────┬───────────────┘
+                                   │
+              ┌────────────────────┼───────────────────┐
+              │      LIFO          │      LIFO         │
+     ┌────────▼───────┐  ┌──────── ▼──────┐  ┌────────▼───────┐
+     │  Worker Thread │  │  Worker Thread │  │  Worker Thread │
+     │  ┌──────────┐  │  │  ┌──────────┐  │  │  ┌──────────┐  │
+     │  │  Deque   │  │  │  │  Deque   │  │  │  │  Deque   │  │
+     │  │ (Tasks)  │  │  │  │ (Tasks)  │  │  │  │ (Tasks)  │  │
+     │  └──────────┘  │  │  └──────────┘  │  │  └──────────┘  │
+     └────────────────┘  └────────────────┘  └────────────────┘
+              ▲                                        │
+              │          Work Stealing(FIFO) ◄─────────┘
+              └────────────────────────────────────────
+```
