@@ -97,7 +97,54 @@ public class ParallelSum extends RecursiveTask<Long>{
       long result = pool.invoke(new ParallelSum(data, 0, size));
       System.out.println("Sum: " + result); // 500000500000
    }
-    
+    /**
+     * Always fork() the second subtask and compute() (not join()) the first in the current thread. 
+     * This avoids blocking the current worker unnecessarily and reduces thread context switching.
+     */
+}
+
+```
+### RecursiveAction - Parallel Array Initialization
+
+```java
+import java.util.Arrays;
+import java.util.concurrent.ForkJoinPool;
+
+public class ParallelFill extends RecursiveAction {
+
+   private static final int THRESHOLD = 5000;
+   private final int[] array;
+   private final int start, end, value;
+
+   public ParallelFill(int[] array, int start, int end, int value) {
+      this.array = array;
+      this.start = start;
+      this.end = end;
+      this.value = value;
+   }
+
+   @Override
+   protected void compute() {
+      if ((end - start) <= THRESHOLD) {
+         Arrays.fill(array, start, end, value);
+         return;
+      }
+
+      int mid = (start + end) / 2;
+      invokeAll(  // forks both task and waits
+              new ParallelFill(array, start, mid, value),
+              new ParallelFill(array, mid, end, value)
+      );
+   }
+
+   public static void main(String[] args) {
+      int[] arr = new int[1_000_000];
+      ForkJoinPool pool = new ForkJoinPool();
+      
+      pool.invoke(new ParallelFill(arr,0,arr.length,42));
+      pool.shutdown();
+      System.out.println(arr[999_999]); //42
+   }
 }
 
 ```
