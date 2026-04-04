@@ -148,3 +148,22 @@ public class ParallelFill extends RecursiveAction {
 }
 
 ```
+### Fork-Join Pool and Parallel Stream
+```java
+
+// Parallel streams internally use ForkJoinPool.commonPool():
+List<Integer> result = IntStream.rangeClosed(1, 1_000_000)
+        .parallel()
+           .filter(n -> n % 2 == 0)
+           .boxed()
+           .collect(Collectors.toList());
+
+// Run parallel stream on a CUSTOM pool
+        ForkJoinPool myPool = new ForkJoinPool(2);
+        myPool.submit(() ->
+           IntStream.rangeClosed(1, 1_000_000)
+              .parallel()
+              .sum()
+        ).get();
+
+```
