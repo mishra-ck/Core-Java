@@ -35,3 +35,69 @@ The differentiator between a ThreadPoolExecutor and Fork-Join Pool is its `work-
               │          Work Stealing(FIFO) ◄─────────┘
               └────────────────────────────────────────
 ```
+Key classes:
+```
+![img.png](img.png)
+```
+### RecursiveTask - Parallel Sum
+
+```java
+import java.util.concurrent.RecursiveTask;
+
+public class ParallelSum extends RecursiveTask<Long>{
+    
+    private static final int THRESHOLD = 10000;  
+    private final long[] array;
+    private final int start,end;
+    
+    public ParallelSum(long[] array, int start, int end) {
+       this.array = array;
+       this.start = start;
+       this.end = end;
+    }
+    
+    @Override
+    protected long compute(){
+       int length = end -start;
+       
+       // Base case - small enough to compute directly
+       if(length <= THRESHOLD) return computeDirectly();
+       
+       // FORK : split into two halves
+       int mid = start+length/2;
+       ParallelSum leftTask  = new ParallelSum(array, start, mid);
+       ParallelSum rightTask = new ParallelSum(array, mid, end);
+       
+       // Fork right task asynchronously (pushed to deque)
+       rightTask.fork();
+       
+       // Compute leftTask in the current thread
+       long leftResult = leftTask.compute();
+       
+       // JOIN - wait for right task result
+       long rightResult = rightTask.join();
+       
+       return leftResult + rightResult ;
+    }
+    
+   private long computeDirectly() {
+      long sum = 0;
+      for (int i = start; i < end; i++) sum += array[i];
+      return sum;
+   }
+
+   public static void main(String[] args) {
+      int size = 1_000_000;
+      long[] data = new long[size];
+      for (int i = 0; i < size; i++) data[i] = i + 1;
+
+      // parallelism = CPU cores - 1
+      ForkJoinPool pool = ForkJoinPool.commonPool();
+
+      long result = pool.invoke(new ParallelSum(data, 0, size));
+      System.out.println("Sum: " + result); // 500000500000
+   }
+    
+}
+
+```
