@@ -148,6 +148,35 @@ public class ParallelFill extends RecursiveAction {
 }
 
 ```
+### Custom ForkJoinPool - Controlling Parallelism
+
+```java
+import java.util.concurrent.ForkJoinPool;
+
+class CustomForkJoin {
+   public static void main(String[] args) {
+
+      ForkJoinPool commonPool = ForkJoinPool.commonPool();
+      System.out.println(commonPool.getParallelism());  // for octa core CPU - 7 
+
+      // custom pool - useful for isolation
+      ForkJoinPool customPool = new ForkJoinPool(
+              4,   // parallelism level
+              ForkJoinPool.defaultForkJoinWorkerThreadFactory,
+              null,   //UncaughtExceptionHandler
+              false   // asyncMode
+      );
+      
+      try{
+          Long result = customPool.invoke(new ParallelSum(data, 0,data.legth()));
+      }finally{
+          customPool.shutdown();   
+      }
+   }
+}
+
+```
+
 ### Fork-Join Pool and Parallel Stream
 ```java
 
