@@ -179,20 +179,24 @@ class CustomForkJoin {
 
 ### Fork-Join Pool and Parallel Stream
 ```java
+class ParallelStreamForkJoin{
+   public static void main(String[] args) {
 
 // Parallel streams internally use ForkJoinPool.commonPool():
-List<Integer> result = IntStream.rangeClosed(1, 1_000_000)
-        .parallel()
-           .filter(n -> n % 2 == 0)
-           .boxed()
-           .collect(Collectors.toList());
+      List<Integer> result = IntStream.rangeClosed(1, 1_000_000)
+              .parallel()
+              .filter(n -> n % 2 == 0)
+              .boxed()
+              .collect(Collectors.toList());
 
 // Run parallel stream on a CUSTOM pool
-        ForkJoinPool myPool = new ForkJoinPool(2);
-        myPool.submit(() ->
-           IntStream.rangeClosed(1, 1_000_000)
-              .parallel()
-              .sum()
-        ).get();
+      ForkJoinPool myPool = new ForkJoinPool(2);
+      myPool.submit(() ->
+              IntStream.rangeClosed(1, 1_000_000)
+                      .parallel()
+                      .sum()
+      ).get();
+   }
+}
 
 ```
