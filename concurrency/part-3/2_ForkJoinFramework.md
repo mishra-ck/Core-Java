@@ -176,6 +176,10 @@ class CustomForkJoin {
 }
 
 ```
+### Parallel Merge Sort
+```java
+
+```
 
 ### Fork-Join Pool and Parallel Stream
 ```java
@@ -198,5 +202,14 @@ class ParallelStreamForkJoin{
       ).get();
    }
 }
+
+```
+### Summary 
+```
+ForkJoinPool  →  Work-stealing thread pool
+RecursiveTask →  divide + conquer + return result
+RecursiveAction → divide + conquer + no result
+ManagedBlocker → safely block inside a FJ task
+invokeAll()   →  cleanest way to fork multiple subtasks
 
 ```
