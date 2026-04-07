@@ -178,6 +178,46 @@ class CustomForkJoin {
 ```
 ### Parallel Merge Sort
 ```java
+public class ParallelMergeSort extends RecursiveAction {
+
+    private static final int THRESHOLD = 2_048;
+    private final int[] array;
+    private final int left, right;
+
+    public ParallelMergeSort(int[] array, int left, int right) {
+        this.array = array;
+        this.left = left;
+        this.right = right;
+    }
+
+    @Override
+    protected void compute() {
+        // Base case
+        if (right - left < THRESHOLD) {
+            Arrays.sort(array, left, right);
+            return;
+        }
+        //Divide 
+        int mid = (left + right) / 2;
+        
+        //Conquer
+        ParallelMergeSort leftSort  = new ParallelMergeSort(array, left, mid);
+        ParallelMergeSort rightSort = new ParallelMergeSort(array, mid, right);
+
+        invokeAll(leftSort, rightSort);
+        merge(array, left, mid, right);
+    }
+
+    private void merge(int[] arr, int l, int m, int r) {
+        int[] temp = Arrays.copyOfRange(arr, l, r);
+        int i = 0, j = m - l, k = l;
+        while (i < m - l && j < r - l) {
+            arr[k++] = temp[i] <= temp[j] ? temp[i++] : temp[j++];
+        }
+        while (i < m - l) arr[k++] = temp[i++];
+        while (j < r - l) arr[k++] = temp[j++];
+    }
+}
 
 ```
 
