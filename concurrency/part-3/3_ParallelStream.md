@@ -58,3 +58,36 @@ class ParallelStreamsConcepts {
     }
 }
 ```
+### 4. Thread safety - critical concern
+Multiple threads operating on shared mutable state causes data corruption, `ConcurrentModificationException`
+or lost updates.
+NOTE: Never mutate shared state in  Parallel stream lambdas.
+
+```java
+import java.util.ArrayList;
+
+class ParallelThreadSafety {
+    public static void main(String[] args) {
+        
+        // Wrong - data loss or ConcurrentModificationException
+        List<Payment> flagged = new ArrayList<>();
+        payments.parallelStream()
+                .forEach(p ->{
+                        if(fraudEngine.isSuspicious(p)){
+                            flagged.add(p);  // ArrayList is not Thread safe
+                        }
+                    }    
+                );
+        // Correct - use collect() with thread safe collector
+        List<Payment> flagged = payments.parallelStream()
+                .filter(fraudEngine::isSuspicious)
+                .collect(Collectors.toList()); 
+        
+        // Correct - use ConcurrentHashMap to get into a map object
+        ConcurrentHashMap<String, Long> txnCountByMerchant = new ConcurrentHashMap<>();
+        payment.parallelStream()
+                .forEach(p -> txnCountByMerchant.merge(p.getMerchantId(), 1L, Long::sum));
+  
+    }
+}
+```
