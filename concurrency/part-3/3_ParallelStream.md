@@ -1,6 +1,6 @@
 Parallel Streams 
 ---
-### 1. How to parallel streams work internally
+### 1. How to parallel streams work internally ?
 
 When we call `.parallelStream()` on a collection, internally Java does:
 ```
@@ -31,6 +31,30 @@ class ParallelStreamConcepts{
                 .sorted()
                 .collect(Collectors.toList());
         
+    }
+}
+```
+### 3. Spliterator - data splitting
+![img_2.png](img_2.png)
+
+```java
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
+class ParallelStreamsConcepts {
+    public static void main(String[] args) {
+        
+        // Even though source is LinkedList from a queue, force ArrayList for good splitting
+        List<Transaction> batch = new ArrayList<>(inboundQueue.fetchAll());
+        
+        Map<String, BigDecimal> fxExposure = batch.parallelStream()
+                .filter(tx -> tx.getCurrency() != Currency.INR)
+                .collect(Collectors.groupingByConcurrent(
+                        tx -> tx.getCurrency().getCode(),
+                        Collectors.reducing(BigDecimal.ZERO,Transaction::getAmount,
+                                BigDecimal::add)
+                ));
     }
 }
 ```
