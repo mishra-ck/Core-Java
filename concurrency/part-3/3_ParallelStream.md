@@ -35,7 +35,7 @@ class ParallelStreamConcepts{
 }
 ```
 ### 3. Spliterator - data splitting
-![img_2.png](img_2.png)
+![img_2.png](Spliterator-Usages.png)
 
 ```java
 import java.math.BigDecimal;
