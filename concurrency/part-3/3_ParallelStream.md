@@ -87,7 +87,33 @@ class ParallelThreadSafety {
         ConcurrentHashMap<String, Long> txnCountByMerchant = new ConcurrentHashMap<>();
         payment.parallelStream()
                 .forEach(p -> txnCountByMerchant.merge(p.getMerchantId(), 1L, Long::sum));
-  
     }
 }
+```
+### Terminal Operation
+a. `collect()`
+```java
+// 1. Group payments by currency
+Map<String, List<Payment>> byCurrency = payments.parallelStream()
+    .collect(Collectors.groupingByConcurrent(Payment::getCurrencyCode));
+
+// 2. Sum amount per currency
+Map<String, BigDecimal> totalByCurrency = payments.parallelStream()
+    .collect(Collectors.groupingByConcurrent(
+        Payment::getCurrencyCode,
+        Collectors.reducing(BigDecimal.ZERO, Payment::getAmount, BigDecimal::add)
+        ));
+
+// 3. Partition into high-value vs normal
+Map<Boolean, List<Payment>> partitioned = payments.parallelStream()
+    .collect(Collectors.partitioningBy(
+    p -> p.getAmount().compareTo(new BigDecimal("100000")) > 0
+));
+
+// 4. Statistics — min, max, avg amount in one pass
+DoubleSummaryStatistics stats = payments.parallelStream()
+    .collect(Collectors.summarizingDouble(p -> p.getAmount().doubleValue()));
+```
+
+
 ```
