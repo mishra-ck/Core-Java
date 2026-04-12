@@ -131,3 +131,21 @@ BigDecimal netFlow = trades.parallelStream()
 );
 
 ```
+c. `forEach()` and `forEachOrdered()`
+```java
+// forEach — threads write in any order
+payments.parallelStream()
+    .forEach(p -> auditLogger.log(p.getId(), p.getStatus())); // order doesn't matter
+
+// forEachOrdered — enforces source order — Avoid on large datasets
+ payments.parallelStream()
+        .forEachOrdered(p -> orderedFile.write(p));
+
+// If we need ordered output, collect() then iterate
+List<Payment> sorted = payments.parallelStream()
+    .filter(Payment::isApproved)
+    .sorted(Comparator.comparing(Payment::getTimestamp))
+    .collect(Collectors.toList());
+sorted.forEach(orderedFile::write); // sequential write after parallel processing
+
+```
