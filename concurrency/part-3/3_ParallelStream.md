@@ -114,6 +114,20 @@ Map<Boolean, List<Payment>> partitioned = payments.parallelStream()
 DoubleSummaryStatistics stats = payments.parallelStream()
     .collect(Collectors.summarizingDouble(p -> p.getAmount().doubleValue()));
 ```
+b. `reduce()`
+```java
+// Only safe for sequential; parallel gives wrong results
+BigDecimal total = payments.stream()
+    .map(Payment::getAmount)
+    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+// CORRECT — explicit 3-arg form for parallel safety with custom types
+BigDecimal netFlow = trades.parallelStream()
+    .reduce(
+    BigDecimal.ZERO,                    // identity
+    (acc, t) -> acc.add(               // accumulator
+    t.getSide() == BUY ? t.getNotional() : t.getNotional().negate()),
+    BigDecimal::add                     // combiner: merges two partial sums
+);
 
 ```
