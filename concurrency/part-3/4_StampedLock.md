@@ -9,6 +9,7 @@ state of the lock.
 3. Optimistic Reading: It returns a stamp without actually acquiring lock.We perform read and then `validate` if a write happened in meantime.
    if no write occurred, we save overhead of heavy lock.
 
+### Coordinate System
 ```java
 import java.util.concurrent.locks.StampedLock;
 
@@ -34,5 +35,43 @@ class PointCoordinateSystem {
         }
         return Math.sqrt(currentX*currentX + currentY*currentY);
     }
+}
+```
+### High Performance Cache
+
+```java
+import java.util.HashMap;
+import java.util.concurrent.locks.StampedLock;
+
+class HighPerformanceCache {
+    
+   private final Map<String, String> cache = new HashMap<>();
+   private final StampedLock lock = new StampedLock();
+   
+   public String get(String key){
+       //1. Optimistic read
+       long stamp = lock.tryOptimisticRead();
+       String value = cache.get(key);
+       //2. Validate
+      if(!lock.validate(stamp)){
+         //3. Validation failed, someone wrote to cache
+         // fallback to pessimistic read
+         stamp = lock.readLock();
+         try{
+             value = cache.get(key);
+         }finally {
+             lock.unlockRead();
+         }
+      }
+       return value;
+   }
+   public void put(String key, String value){
+       long stamp = lock.writeLock();
+       try {
+           cache.put(key,value);
+       }finally {
+           lock.unlockWrite(stamp);
+       }
+   }
 }
 ```
