@@ -64,3 +64,30 @@ Virtual thread gets PINNED(cannot unmount) when-
 
 NOTE: Pinned VT thread still works but blocks the carrier thread..
 ```
+### Thread.Builder API (Java 21)
+```java
+class ThreadBuilderAPI{
+    public static void main(String[] args) {
+        // Platform thread builder
+        Thread.Builder.OfPlatform platformBuilder = Thread.ofPlatform()
+                .name("platform-",0)
+                .priority(Thread.NORM_PRIORITY)
+                .deamon(false)
+                .stackSize(0);  
+        
+        // Virtual thread builder
+        Thread.Builder.OfVirtual virtualBuilder = Thread.ofVirtual()
+                .name("virtual-",0)
+                .uncaughtExceptionHandler((t,e) -> log.error("VT error",e));
+        
+        // Start directly 
+        Thread t = virtualBuilder.start(() -> doWork());
+        
+        // Use as ThreadFactory
+        ThreadFactory vtFactory = Thread.ofVirtual().name("virtual-", 0).factory();
+        ExecutorService exec = Executors.newThreadPerTaskExecutor(vtFactory);
+        
+    }
+}
+
+```
