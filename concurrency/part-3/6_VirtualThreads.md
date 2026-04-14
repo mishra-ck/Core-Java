@@ -90,3 +90,53 @@ class ThreadBuilderAPI{
 }
 
 ```
+### Real-world examples
+```java 
+class RealWorldExamples{
+    public static void main(String[] args) {
+
+        // High-Concurrency web server - we can get new thread for each requests
+        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            IntStream.range(0, 10_000).forEach(i -> {
+                executor.submit(() -> {
+                    // Simulate a slow DB call or API fetch
+                    Thread.sleep(Duration.ofSeconds(1));
+                    return "Result " + i;
+                });
+            });
+        } // Executor waits for all tasks to finish
+
+        // Handling Many Socket Connections
+        // Maintaining 100,000 active WebSocket or TCP connections is easy because an idle connection consumes almost no memory.
+        try (var serverSocket = new ServerSocket(8080)) {
+            while (true) {
+                var clientSocket = serverSocket.accept();
+                Thread.startVirtualThread(() -> handleClient(clientSocket));
+            }
+        }
+        
+        // Massive Web Scraping
+        // Scrapping thousands of pages often involves 99% waiting for network responses. VT makes it look easy.
+        List<String> urls = List.of("url1", "url2","url3");
+        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            urls.forEach(url -> executor.submit(() -> {
+                String html = client.send(HttpRequest.newBuilder(URI.create(url)).build(),
+                        BodyHandlers.ofString()).body();
+                process(html);
+            }));
+        }
+    }
+    
+    // Database heavy batch processing
+    void processLargeBatch(List<Record> records) {
+        for (Record r : records) {
+            Thread.startVirtualThread(() -> {
+                repository.update(r); // Blocks the virtual thread, but not the OS thread
+            });
+        }
+    }
+    
+}
+
+
+```
