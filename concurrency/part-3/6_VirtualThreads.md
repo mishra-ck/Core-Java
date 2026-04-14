@@ -44,3 +44,23 @@ class CreateVirtualThread{
     }
 }
 ```
+### What to use Virtual Thread and what not ?
+```
+Good to use:
+1. Web Servers/ Rest APIs with DB-Network calls
+2. Batch processing with I/O 
+3. Microservices making downstream calls, any I/O workload
+
+NOT for:
+1. CPU bound work
+2. Already async reactive code( CompletableFuture pipelines)
+3. Tight loops without I/O
+
+PINNING - when Virtual threads get stuck on Carrier
+
+Virtual thread gets PINNED(cannot unmount) when-
+1. Inside synchronized block/method during I/O
+2. Calling native methods(JNI)
+
+NOTE: Pinned VT thread still works but blocks the carrier thread..
+```
