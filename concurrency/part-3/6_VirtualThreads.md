@@ -22,3 +22,25 @@ Virtual Thread Solution:
 * Resuming: Once blocking call is done, the scheduler finds an available Carrier thread,
           restores the stack from Heap, and Virtual thread continues where if left out.
 ```
+### Creating Virtual Threads
+```java
+class CreateVirtualThread{
+    public static void main(String[] args) {
+        // 1. Direct Start
+        Thread vt = Thread.ofVirtual()
+                .name(vt-1)
+                .start(() ->{
+                    String data = Files.readString(Path.of("file-location"));
+                    process(data);
+                });
+
+        // 2. Via Executor (suggested)
+        try(ExecutorService vtExecutor = Executors.newVirtualThreadPerTaskExecutor()){
+            // every submitted task will get its own virtual thread
+            List<Future<String>> futures  = IntStream.range(0,10000)
+                    .mapToObj(i -> vtExecutor.submit( () -> processRequest(i)))
+                    .collect(Collectors.toList());
+        }
+    }
+}
+```
