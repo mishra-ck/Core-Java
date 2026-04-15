@@ -38,4 +38,18 @@ stream-oriented data processing with `non-blocking backpressure`.
    3. The Ask (Backpressure): The Subscriber saves the Subscription and calls subscription.request(n) to ask for a specific number of items.
    4. The Delivery: The Publisher sends up to n items by calling subscriber.onNext(item) for each one.
    5. Completion: Once all data is sent, the Publisher calls subscriber.onComplete().
+   
    ```
+4. Concept Implementation
+```java 
+
+// create a slow subscriber to understand how backpressure works 
+class SlowSubscriber{
+    
+}
+
+// create a publisher and run the flow
+class FlowApiDemo{
+    
+}
+```
