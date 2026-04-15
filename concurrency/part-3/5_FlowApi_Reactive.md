@@ -31,4 +31,11 @@ stream-oriented data processing with `non-blocking backpressure`.
       It receives data of type T, transforms it, and publishes it as type R.
    
    ```
-
+3. How the interfaces interact ?
+   ```
+   1. Connection: The Subscriber calls publisher.subscribe(subscriber).
+   2. Acknowledgment: The Publisher creates a Subscription object and passes it back to the Subscriber by calling subscriber.onSubscribe(subscription).
+   3. The Ask (Backpressure): The Subscriber saves the Subscription and calls subscription.request(n) to ask for a specific number of items.
+   4. The Delivery: The Publisher sends up to n items by calling subscriber.onNext(item) for each one.
+   5. Completion: Once all data is sent, the Publisher calls subscriber.onComplete().
+   ```

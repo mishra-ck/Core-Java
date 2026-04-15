@@ -1,4 +1,5 @@
 StampedLock - introduced in java 8 to overcome shortcomings of ReentrantReadWriteLock
+---
 
 Uses `capability-based` lock that uses `long` value(Stamp) to represent the 
 state of the lock.
