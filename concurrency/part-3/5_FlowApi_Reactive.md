@@ -42,48 +42,12 @@ stream-oriented data processing with `non-blocking backpressure`.
    ```
 4. Concept Implementation
 ```java 
-
-// create a slow subscriber to understand how backpressure works 
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.SubmissionPublisher;
 import java.util.concurrent.Flow;
 
-public class FlowApiDemo {
-    
-   public static void main(String[] args) throws InterruptedException {
-       
-      // 1. Create a Publisher powered by Virtual Threads
-      try (var executor = Executors.newVirtualThreadPerTaskExecutor();
-           var publisher = new SubmissionPublisher<String>(executor, Flow.defaultBufferSize())) {
-
-         // 2. Create and register our subscriber
-         var subscriber = new SlowSubscriber("Worker-1");
-         publisher.subscribe(subscriber);
-
-         // 3. Publish a burst of data extremely fast
-         List<String> itemsToPublish = List.of(
-                 "Task A", "Task B", "Task C", "Task D", "Task E"
-         );
-
-         System.out.println("Publisher starting to emit items...");
-         for (String item : itemsToPublish) {
-            System.out.println("Publisher submitting: " + item);
-            publisher.submit(item); // This sends data to the buffer
-         }
-
-         System.out.println("Publisher finished submitting items.");
-
-         // 4. Close the publisher to send the onComplete signal
-         publisher.close();
-
-         // Wait a bit, let virtual threads finish processing
-         Thread.sleep(6000);
-      }
-   }
-}
-
-// create a publisher and run the flow
+// create a slow subscriber to understand how backpressure works
 public class SlowSubscriber implements Flow.Subscriber<String> {
     
    private Flow.Subscription subscription;
@@ -122,6 +86,41 @@ public class SlowSubscriber implements Flow.Subscriber<String> {
    @Override
    public void onComplete() {
       System.out.println(name + " is done, all items are processed");
+   }
+}
+
+// create a publisher and run the flow
+public class FlowApiDemo {
+
+   public static void main(String[] args) throws InterruptedException {
+
+      // 1. Create a Publisher powered by Virtual Threads
+      try (var executor = Executors.newVirtualThreadPerTaskExecutor();
+           var publisher = new SubmissionPublisher<String>(executor, Flow.defaultBufferSize())) {
+
+         // 2. Create and register our subscriber
+         var subscriber = new SlowSubscriber("Worker-1");
+         publisher.subscribe(subscriber);
+
+         // 3. Publish a burst of data extremely fast
+         List<String> itemsToPublish = List.of(
+                 "Task A", "Task B", "Task C", "Task D", "Task E"
+         );
+
+         System.out.println("Publisher starting to emit items...");
+         for (String item : itemsToPublish) {
+            System.out.println("Publisher submitting: " + item);
+            publisher.submit(item); // This sends data to the buffer
+         }
+
+         System.out.println("Publisher finished submitting items.");
+
+         // 4. Close the publisher to send the onComplete signal
+         publisher.close();
+
+         // Wait a bit, let virtual threads finish processing
+         Thread.sleep(6000);
+      }
    }
 }
 
