@@ -44,12 +44,85 @@ stream-oriented data processing with `non-blocking backpressure`.
 ```java 
 
 // create a slow subscriber to understand how backpressure works 
-class SlowSubscriber{
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.SubmissionPublisher;
+import java.util.concurrent.Flow;
+
+public class FlowApiDemo {
     
+   public static void main(String[] args) throws InterruptedException {
+       
+      // 1. Create a Publisher powered by Virtual Threads
+      try (var executor = Executors.newVirtualThreadPerTaskExecutor();
+           var publisher = new SubmissionPublisher<String>(executor, Flow.defaultBufferSize())) {
+
+         // 2. Create and register our subscriber
+         var subscriber = new SlowSubscriber("Worker-1");
+         publisher.subscribe(subscriber);
+
+         // 3. Publish a burst of data extremely fast
+         List<String> itemsToPublish = List.of(
+                 "Task A", "Task B", "Task C", "Task D", "Task E"
+         );
+
+         System.out.println("Publisher starting to emit items...");
+         for (String item : itemsToPublish) {
+            System.out.println("Publisher submitting: " + item);
+            publisher.submit(item); // This sends data to the buffer
+         }
+
+         System.out.println("Publisher finished submitting items.");
+
+         // 4. Close the publisher to send the onComplete signal
+         publisher.close();
+
+         // Wait a bit, let virtual threads finish processing
+         Thread.sleep(6000);
+      }
+   }
 }
 
 // create a publisher and run the flow
-class FlowApiDemo{
+public class SlowSubscriber implements Flow.Subscriber<String> {
     
+   private Flow.Subscription subscription;
+   private final String name;
+
+   public SlowSubscriber(String name) {
+      this.name = name;
+   }
+
+   @Override
+   public void onSubscribe(Flow.Subscription subscription) {
+      this.subscription = subscription;
+      System.out.println(name + " Subscribed! Requesting first 2 items...");
+      // Ask for only 2 items initially - Backpressure
+      subscription.request(2);
+   }
+
+   @Override
+   public void onNext(String item) {
+      System.out.println(name + " received: " + item);
+      try {
+         Thread.sleep(1000); // Simulate slow processing
+      } catch (InterruptedException e) {
+         Thread.currentThread().interrupt();
+      }
+      System.out.println(name + " finished processing. Requesting 1 more...");
+      // Request the next item only AFTER processing the current one
+      subscription.request(1);
+   }
+
+   @Override
+   public void onError(Throwable throwable) {
+      System.err.println(name + " encountered an error: " + throwable.getMessage());
+   }
+
+   @Override
+   public void onComplete() {
+      System.out.println(name + " is done, all items are processed");
+   }
 }
+
 ```
