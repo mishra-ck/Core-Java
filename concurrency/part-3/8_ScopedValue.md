@@ -54,3 +54,40 @@ public class ScopedValueExample {
 }
 
 ```
+### Use Case 2: Scoped Value with Virtual Threads
+```java
+import java.util.ScopedValue;
+import java.util.concurrent.StructuredTaskScope;
+
+public class ScopedValueConcurrency {
+    
+    private final static ScopedValue<String> TRACE_ID = ScopedValue.newInstance();
+
+    public static void main(String[] args) {
+        
+        ScopedValue.where(TRACE_ID, "TX-999").run(() -> {
+            
+            try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+                // Forking child tasks (Virtual Threads)
+                var subTask1 = scope.fork(() -> {
+                    // This child thread automatically sees the parent's TRACE_ID
+                    return "Task 1" + TRACE_ID.get() + "finished";
+                });
+
+                var subTask2 = scope.fork(() -> {
+                    return "Task 2" + TRACE_ID.get() + "finished";
+                });
+
+                scope.join().throwIfFailed();
+                
+                System.out.println(subTask1.get());
+                System.out.println(subTask2.get());
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+}
+
+```
